@@ -1,13 +1,16 @@
+use std::collections::HashMap;
+
+use anyhow::{anyhow, Result};
 use lazy_static::lazy_static;
 
 #[derive(Debug)]
-struct CommandInfo {
+pub struct CommandInfo {
     num_args: usize,
     arg_types: Vec<&'static str>,
 }
 
 impl CommandInfo {
-    fn validate_args(&self, args: &[String]) -> Result<()> {
+    pub fn validate_args(&self, args: Vec<String>) -> Result<()> {
         if args.len() != self.num_args {
             return Err(anyhow!(
                 "Expected {} arguments, got {}",
