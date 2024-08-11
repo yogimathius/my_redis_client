@@ -13,12 +13,10 @@ async fn main() -> Result<()> {
         std::process::exit(1);
     }
 
-    let formatted_command = format!("{} {}", command, parameters.join(" "));
-
     let addr = "localhost".to_string();
-    let port = 6739;
+    let port = 6379;
     let mut redis_client = RedisClient::new(addr, port).await;
 
-    let _ = redis_client.send_command(formatted_command).await;
+    let _ = redis_client.send_command(command, parameters).await;
     Ok(())
 }
