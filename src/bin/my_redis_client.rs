@@ -1,10 +1,14 @@
-use my_redis_client::redis_client::RedisClient;
+use anyhow::Result;
+use my_redis_client::{command_info::COMMANDS, redis_client::RedisClient};
 
-fn main() {
+#[tokio::main]
+async fn main() -> Result<()> {
     let command = std::env::args().nth(1).expect("Usage: my_ping <command>");
     let parameters: Vec<String> = std::env::args().skip(2).collect();
 
-    if !VALID_COMMANDS.contains(command.as_str()) {
+    if let Some(command_info) = COMMANDS.get(command.as_str()) {
+        let _ = command_info.validate_args(parameters.clone());
+    } else {
         eprintln!("Invalid command: {}", command);
         std::process::exit(1);
     }
@@ -13,7 +17,8 @@ fn main() {
 
     let addr = "localhost".to_string();
     let port = 6739;
-    let redis_client = RedisClient::new(addr, port);
+    let mut redis_client = RedisClient::new(addr, port).await;
 
-    redis_client.send_command(formatted_command)
+    let _ = redis_client.send_command(formatted_command).await;
+    Ok(())
 }
