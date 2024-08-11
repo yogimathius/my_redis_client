@@ -41,8 +41,8 @@ lazy_static! {
         m.insert("ping", CommandInfo { num_args: 0, arg_types: vec![] }); // or 1 argument
         m.insert("flushall", CommandInfo { num_args: 0, arg_types: vec![] });
         m.insert("info", CommandInfo { num_args: 0, arg_types: vec![] });
-        m.insert("set", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
-        m.insert("get", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("SET", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
+        m.insert("GET", CommandInfo { num_args: 1, arg_types: vec!["String"] });
         m.insert("key", CommandInfo { num_args: 1, arg_types: vec!["String"] });
         m.insert("type", CommandInfo { num_args: 1, arg_types: vec!["String"] });
         m.insert("del", CommandInfo { num_args: 1, arg_types: vec!["String"] });
