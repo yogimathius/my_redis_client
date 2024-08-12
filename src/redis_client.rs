@@ -2,11 +2,11 @@ use anyhow::Result;
 use tokio::{io::AsyncWriteExt, net::TcpStream};
 
 pub struct RedisClient {
-    server_address: String,
-    port: u16,
-    stream: TcpStream,
-    command_queue: Vec<String>,
-    last_response: Option<String>,
+    pub server_address: String,
+    pub port: u16,
+    pub stream: TcpStream,
+    pub command_queue: Vec<String>,
+    pub last_response: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
