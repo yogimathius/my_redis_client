@@ -24,8 +24,8 @@ mod tests {
         let addr = setup_mock_server().await;
 
         let mut client = RedisClient::new(
-            addr.split(':').next().unwrap().to_string(),
-            addr.split(':').nth(1).unwrap().parse().unwrap(),
+            Some(addr.split(':').next().unwrap().to_string()),
+            Some(addr.split(':').nth(1).unwrap().parse().unwrap()),
         )
         .await;
         assert!(client.port == addr.split(':').nth(1).unwrap().parse().unwrap());

@@ -36,12 +36,17 @@ impl Value {
 }
 
 impl RedisClient {
-    pub async fn new(addr: String, port: u16) -> RedisClient {
-        let stream = TcpStream::connect(format!("{addr}:{port}")).await.unwrap();
+    pub async fn new(addr: Option<String>, port: Option<u16>) -> RedisClient {
+        let default_addr = addr.unwrap_or("localhost".to_string());
+        let default_port = port.unwrap_or(6379);
+
+        let stream = TcpStream::connect(format!("{default_addr}:{default_port}"))
+            .await
+            .unwrap();
         println!("connecting");
         RedisClient {
-            server_address: addr.to_string(),
-            port: port,
+            server_address: default_addr,
+            port: default_port,
             stream: stream,
             command_queue: Vec::new(),
             last_response: None,

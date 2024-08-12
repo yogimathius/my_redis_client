@@ -13,9 +13,7 @@ async fn main() -> Result<()> {
         std::process::exit(1);
     }
 
-    let addr = "localhost".to_string();
-    let port = 6379;
-    let mut redis_client = RedisClient::new(addr, port).await;
+    let mut redis_client = RedisClient::new(None, None).await;
 
     let _ = redis_client.send_command(command, parameters).await;
     Ok(())
