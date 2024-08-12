@@ -5,9 +5,7 @@ mod tests {
     use tokio::net::TcpListener;
     use tokio::task;
 
-    #[tokio::test]
-    async fn test_redis_client() {
-        // Start a mock server
+    pub async fn setup_mock_server() -> String {
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let addr = listener.local_addr().unwrap();
 
@@ -18,14 +16,23 @@ mod tests {
             let _ = socket;
         });
 
-        // Create the RedisClient and connect to the mock server
-        let mut client = RedisClient::new(addr.ip().to_string(), addr.port()).await;
-        assert!(client.port == addr.port());
-        assert!(client.server_address == addr.ip().to_string());
+        addr.to_string()
+    }
+
+    #[tokio::test]
+    async fn test_redis_client() {
+        let addr = setup_mock_server().await;
+
+        let mut client = RedisClient::new(
+            addr.split(':').next().unwrap().to_string(),
+            addr.split(':').nth(1).unwrap().parse().unwrap(),
+        )
+        .await;
+        assert!(client.port == addr.split(':').nth(1).unwrap().parse().unwrap());
+        assert!(client.server_address == addr.split(':').next().unwrap().to_string());
         assert!(client.command_queue.is_empty());
         assert!(client.last_response.is_none());
 
-        // Check if the stream is in a good state by attempting a non-blocking write
         let result = client.stream.write(&[]).await;
         assert!(result.is_ok(), "Expected stream to be in a good state");
     }
