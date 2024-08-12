@@ -16,3 +16,7 @@ tokio = { version = "1.39.2", features = ["full"] }
 [[bin]]
 name = "my_redis_client"
 path = "src/bin/my_redis_client.rs"
+
+[[bin]]
+name = "my_redis_repl"
+path = "src/bin/my_redis_repl.rs"
