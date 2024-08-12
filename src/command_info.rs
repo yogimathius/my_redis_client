@@ -11,7 +11,9 @@ pub struct CommandInfo {
 
 impl CommandInfo {
     pub fn validate_args(&self, args: Vec<String>) -> Result<()> {
+        println!("Validating args: {:?}", args);
         if args.len() != self.num_args {
+            println!("Expected {} arguments, got {}", self.num_args, args.len());
             return Err(anyhow!(
                 "Expected {} arguments, got {}",
                 self.num_args,
@@ -19,6 +21,10 @@ impl CommandInfo {
             ));
         }
         for (arg, expected_type) in args.iter().zip(&self.arg_types) {
+            println!(
+                "Validating arg: {} with expected type: {}",
+                arg, expected_type
+            );
             match *expected_type {
                 "String" => {} // All arguments are strings, so no validation needed
                 "Integer" => {
