@@ -1,5 +1,8 @@
 use anyhow::Result;
-use tokio::{io::AsyncWriteExt, net::TcpStream};
+use tokio::{
+    io::{AsyncReadExt, AsyncWriteExt},
+    net::TcpStream,
+};
 
 pub struct RedisClient {
     pub server_address: String,
@@ -64,5 +67,17 @@ impl RedisClient {
             .await
             .unwrap();
         Ok(())
+    }
+
+    pub async fn read_response(&mut self) -> Result<String, std::io::Error> {
+        let mut buffer = [0; 512];
+        let n = self.stream.read(&mut buffer).await?;
+        if n == 0 {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::UnexpectedEof,
+                "Connection closed by the server",
+            ));
+        }
+        Ok(String::from_utf8_lossy(&buffer[..n]).to_string())
     }
 }
