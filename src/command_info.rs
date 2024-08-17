@@ -43,35 +43,35 @@ lazy_static! {
     pub static ref COMMANDS: HashMap<&'static str, CommandInfo> = {
         let mut m = HashMap::new();
         m.insert("quit", CommandInfo { num_args: 0, arg_types: vec![] });
-        m.insert("echo", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("ping", CommandInfo { num_args: 0, arg_types: vec![] }); // or 1 argument
-        m.insert("flushall", CommandInfo { num_args: 0, arg_types: vec![] });
-        m.insert("info", CommandInfo { num_args: 0, arg_types: vec![] });
+        m.insert("ECHO", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("PING", CommandInfo { num_args: 0, arg_types: vec![] }); // or 1 argument
+        m.insert("FLUSHALL", CommandInfo { num_args: 0, arg_types: vec![] });
+        m.insert("INFO", CommandInfo { num_args: 0, arg_types: vec![] });
         m.insert("SET", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
         m.insert("GET", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("key", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("type", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("del", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("unlink", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("expire", CommandInfo { num_args: 2, arg_types: vec!["String", "Integer"] });
-        m.insert("rename", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
-        m.insert("llen", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("lrem", CommandInfo { num_args: 3, arg_types: vec!["String", "Integer", "String"] });
-        m.insert("lindex", CommandInfo { num_args: 2, arg_types: vec!["String", "Integer"] });
-        m.insert("lpop", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("rpop", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("lpush", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
-        m.insert("rpush", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
-        m.insert("lset", CommandInfo { num_args: 3, arg_types: vec!["String", "Integer", "String"] });
-        m.insert("hget", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
-        m.insert("hexists", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
-        m.insert("hdel", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
-        m.insert("hgetall", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("hkeys", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("hlen", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("hmset", CommandInfo { num_args: 3, arg_types: vec!["String", "String", "String"] });
-        m.insert("hset", CommandInfo { num_args: 3, arg_types: vec!["String", "String", "String"] });
-        m.insert("hvals", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("KEY", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("TYPE", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("DEL", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("UNLINK", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("EXPIRE", CommandInfo { num_args: 2, arg_types: vec!["String", "Integer"] });
+        m.insert("RENAME", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
+        m.insert("LLEN", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("LREM", CommandInfo { num_args: 3, arg_types: vec!["String", "Integer", "String"] });
+        m.insert("LINDEX", CommandInfo { num_args: 2, arg_types: vec!["String", "Integer"] });
+        m.insert("LPOP", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("RPOP", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("LPUSH", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
+        m.insert("RPUSH", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
+        m.insert("LSET", CommandInfo { num_args: 3, arg_types: vec!["String", "Integer", "String"] });
+        m.insert("HGET", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
+        m.insert("HEXISTS", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
+        m.insert("HDEL", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
+        m.insert("HGETALL", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("HKEYS", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("HLEN", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("HMSET", CommandInfo { num_args: 3, arg_types: vec!["String", "String", "String"] });
+        m.insert("HSET", CommandInfo { num_args: 3, arg_types: vec!["String", "String", "String"] });
+        m.insert("HVALS", CommandInfo { num_args: 1, arg_types: vec!["String"] });
         m
     };
 }
