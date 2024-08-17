@@ -48,5 +48,14 @@ impl Repl {
 
         let _ = redis_client.send_command(command.to_string(), args).await;
         self.buffer.clear();
+
+        match redis_client.read_response().await {
+            Ok(response) => {
+                println!("{}", response);
+            }
+            Err(e) => {
+                eprintln!("Failed to read from stream: {}", e);
+            }
+        }
     }
 }
