@@ -10,43 +10,43 @@ This CLI tool supports a wide range of Redis commands across various data types:
 
 ### General Commands
 
-- `quit` – Exit the CLI
-- `echo` – Echoes a given message
-- `ping` – Checks if the server is alive
-- `flushall` – Clears all data on the Redis server
-- `info` – Fetches server information
+- `QUIT` – Exit the CLI
+- `ECHO` – Echoes a given message
+- `PING` – Checks if the server is alive
+- `FLUSHALL` – Clears all data on the Redis server
+- `INFO` – Fetches server information
 
 ### Key/Value Commands
 
-- `set` – Set a key to hold a specific value
-- `get` – Get the value of a key
-- `keys` – List all keys matching a pattern
-- `type` – Get the type of a key
-- `del` – Delete a key
-- `unlink` – Asynchronously delete a key
-- `expire` – Set a timeout on a key
-- `rename` – Rename a key
+- `SET` – Set a key to hold a specific value
+- `GET` – Get the value of a key
+- `KEYS` – List all keys matching a pattern
+- `TYPE` – Get the type of a key
+- `DEL` – Delete a key
+- `UNLINK` – Asynchronously delete a key
+- `EXPIRE` – Set a timeout on a key
+- `RENAME` – Rename a key
 
 ### List Commands
 
-- `llen` – Get the length of a list
-- `lrem` – Remove elements from a list
-- `lindex` – Get an element from a list by its index
-- `lpop/rpop` – Remove and return the first/last element from a list
-- `lpush/rpush` – Prepend/Append an element to a list
-- `lset` – Set the value of an element in a list by its index
+- `LLEN` – Get the length of a list
+- `LREM` – Remove elements from a list
+- `LINDEX` – Get an element from a list by its index
+- `LPOP/RPOP` – Remove and return the first/last element from a list
+- `LPUSH/RPUSH` – Prepend/Append an element to a list
+- `LSET` – Set the value of an element in a list by its index
 
 ### Hash Commands
 
-- `hget` – Get the value of a hash field
-- `hexists` – Check if a hash field exists
-- `hdel` – Delete one or more hash fields
-- `hgetall` – Get all fields and values of a hash
-- `hkeys` – Get all field names in a hash
-- `hlen` – Get the number of fields in a hash
-- `hmset` – Set multiple fields in a hash
-- `hset` – Set a field in a hash
-- `hvals` – Get all values in a hash
+- `HGET` – Get the value of a hash field
+- `HEXISTS` – Check if a hash field exists
+- `HDEL` – Delete one or more hash fields
+- `HGETALL` – Get all fields and values of a hash
+- `HKEYS` – Get all field names in a hash
+- `HLEN` – Get the number of fields in a hash
+- `HMSET` – Set multiple fields in a hash
+- `HSET` – Set a field in a hash
+- `HVALS` – Get all values in a hash
 
 ## Requirements
 
