@@ -10,7 +10,7 @@ This CLI tool supports a wide range of Redis commands across various data types:
 
 ### General Commands
 
-- `QUIT` – Exit the CLI
+- `quit` – Exit the CLI
 - `ECHO` – Echoes a given message
 - `PING` – Checks if the server is alive
 - `FLUSHALL` – Clears all data on the Redis server
