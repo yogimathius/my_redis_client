@@ -45,6 +45,8 @@ lazy_static! {
         m.insert("quit", CommandInfo { num_args: 0, arg_types: vec![] });
         m.insert("ECHO", CommandInfo { num_args: 1, arg_types: vec!["String"] });
         m.insert("PING", CommandInfo { num_args: 0, arg_types: vec![] }); // or 1 argument
+        m.insert("PSYNC", CommandInfo { num_args: 2, arg_types: vec!["Integer", "Integer"] });
+        m.insert("FULLRESYNC", CommandInfo { num_args: 2, arg_types: vec!["Integer", "Integer"] });
         m.insert("FLUSHALL", CommandInfo { num_args: 0, arg_types: vec![] });
         m.insert("INFO", CommandInfo { num_args: 0, arg_types: vec![] });
         m.insert("SET", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });

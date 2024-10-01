@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.86"
+broadcast = "0.1.0"
 bytes = "1.7.1"
 clap = { version = "4.5.4", features = ["derive"] }
 ctor = "0.2.8"

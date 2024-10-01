@@ -9,7 +9,7 @@ async fn main() -> Result<()> {
     if let Some(command_info) = COMMANDS.get(command.as_str()) {
         let _ = command_info.validate_args(parameters.clone());
     } else {
-        eprintln!("Invalid command: {}", command);
+        println!("Invalid command: {}", command);
         std::process::exit(1);
     }
 
