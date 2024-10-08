@@ -74,6 +74,7 @@ lazy_static! {
         m.insert("HMSET", CommandInfo { num_args: 3, arg_types: vec!["String", "String", "String"] });
         m.insert("HSET", CommandInfo { num_args: 3, arg_types: vec!["String", "String", "String"] });
         m.insert("HVALS", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("REPLCONF", CommandInfo { num_args: 2, arg_types: vec!["String"] });
         m
     };
 }
