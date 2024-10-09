@@ -37,7 +37,7 @@ impl Repl {
         let command = parts[0];
         let args: Vec<String> = parts[1..].to_vec().iter().map(|s| s.to_string()).collect();
 
-        if let Some(command_info) = COMMANDS.get(command) {
+        if let Some(command_info) = COMMANDS.get(command.to_uppercase().as_str()) {
             let _ = command_info.validate_args(args.clone());
         } else {
             eprintln!("Invalid command: {}", command);
