@@ -106,24 +106,6 @@ For more information on Redis commands, refer to the [Redis Command Reference](h
 
 The client is built using the asynchronous `Tokio` runtime for handling TCP connections. The parsing of Redis frames and commands is abstracted into distinct modules for ease of maintainability and future extension.
 
-## Bonus Features (not implemented yet)
-
-### Logging
-
-The project includes advanced logging using the `tracing` crate for both debugging and tracing capabilities.
-
-### Streams
-
-Publish/Subscribe streams are implemented, allowing real-time messaging with Redis Streams using crates like `tokio-stream` and `async-stream`.
-
-### SSL Support
-
-Optionally, SSL can be enabled using the `--tls` flag with support for `--cacert` or `--cacertdir`.
-
-## License
-
-This project is licensed under the MIT License.
-
 ## Author
 
 Mathius Johnson
