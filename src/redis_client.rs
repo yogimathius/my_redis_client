@@ -5,7 +5,7 @@ use tokio::{
     net::TcpStream,
 };
 
-use crate::models::value::Value;
+use crate::{log, models::value::Value};
 
 pub struct RedisClient {
     pub server_address: String,
@@ -23,7 +23,7 @@ impl RedisClient {
         let stream = TcpStream::connect(format!("{default_addr}:{default_port}"))
             .await
             .unwrap();
-        println!("connecting");
+        log!("connecting");
         RedisClient {
             server_address: default_addr,
             port: default_port,
@@ -33,17 +33,16 @@ impl RedisClient {
         }
     }
 
-    pub async fn send_command(&mut self, command: String, params: Vec<String>) -> Result<String> {
+    pub async fn send_command(&mut self, command: String, params: Vec<Value>) -> Result<String> {
         let mut msg = vec![Value::BulkString(command)];
-        msg.extend(params.into_iter().map(Value::BulkString));
-
-        println!("Sending msg: {:?}", msg);
+        msg.extend(params.into_iter());
+        log!("Sending msg: {:?}", msg);
         let payload = Value::Array(msg).serialize();
 
         if let Some(stream) = &mut self.stream {
             stream.write_all(&payload).await?;
             let response = self.read_response().await?;
-            println!("response: {:?}", response);
+            log!("response: {:?}", response);
             let mut bytes = BytesMut::from(response.as_str());
             let parsed_response = Value::deserialize(&mut bytes)?;
             Ok(parsed_response.to_string())

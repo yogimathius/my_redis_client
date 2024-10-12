@@ -1,4 +1,4 @@
-use crate::{command_info::COMMANDS, redis_client::RedisClient};
+use crate::{command_info::COMMANDS, log, redis_client::RedisClient};
 
 pub struct Repl {
     buffer: String,
@@ -12,13 +12,13 @@ impl Repl {
     }
 
     pub async fn run(&mut self, redis_client: &mut RedisClient) {
-        println!("Welcome to the Redis REPL");
+        log!("Welcome to the Redis REPL");
         loop {
-            println!("> ");
+            log!("> ");
             let mut input = String::new();
             std::io::stdin().read_line(&mut input).unwrap();
             self.buffer.push_str(&input);
-            println!("added input to buffer: {}", self.buffer.trim());
+            log!("added input to buffer: {}", self.buffer.trim());
             if self.buffer.ends_with("\n") {
                 self.handle_input(redis_client).await;
             }
@@ -27,9 +27,9 @@ impl Repl {
 
     pub async fn handle_input(&mut self, redis_client: &mut RedisClient) {
         let input = self.buffer.trim();
-        println!("Handling input: {}", input);
+        log!("Handling input: {}", input);
         let parts: Vec<&str> = input.split_whitespace().collect();
-        println!("split input into parts: {:?}", parts);
+        log!("split input into parts: {:?}", parts);
         if parts.is_empty() {
             self.buffer.clear();
             return;
@@ -38,22 +38,28 @@ impl Repl {
         let args: Vec<String> = parts[1..].to_vec().iter().map(|s| s.to_string()).collect();
 
         if let Some(command_info) = COMMANDS.get(command.to_uppercase().as_str()) {
-            let _ = command_info.validate_args(args.clone());
+            match command_info.validate_and_transform_args(args) {
+                Ok(transformed_args) => {
+                    log!("Sending command: {} {:?}", command, transformed_args);
+
+                    match redis_client
+                        .send_command(command.to_string(), transformed_args)
+                        .await
+                    {
+                        Ok(response) => {
+                            log!("Response: {}", response);
+                        }
+                        Err(e) => {
+                            log!("Error: {}", e);
+                        }
+                    }
+                }
+                Err(e) => {
+                    log!("Invalid arguments: {}", e);
+                }
+            }
         } else {
-            eprintln!("Invalid command: {}", command);
-            self.buffer.clear();
-            return;
-        }
-
-        println!("Sending command: {} {:?}", command, args);
-
-        match redis_client.send_command(command.to_string(), args).await {
-            Ok(response) => {
-                println!("Response: {}", response);
-            }
-            Err(e) => {
-                eprintln!("Error: {}", e);
-            }
+            log!("Invalid command: {}", command);
         }
 
         self.buffer.clear();

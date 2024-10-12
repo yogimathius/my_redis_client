@@ -3,39 +3,44 @@ use std::collections::HashMap;
 use anyhow::{anyhow, Result};
 use lazy_static::lazy_static;
 
+use crate::{log, models::value::Value};
+
 #[derive(Debug)]
 pub struct CommandInfo {
-    num_args: usize,
-    arg_types: Vec<&'static str>,
+    pub num_args: usize,
+    pub arg_types: Vec<&'static str>,
 }
 
 impl CommandInfo {
-    pub fn validate_args(&self, args: Vec<String>) -> Result<()> {
-        println!("Validating args: {:?}", args);
+    pub fn validate_and_transform_args(&self, args: Vec<String>) -> Result<Vec<Value>> {
+        log!("Validating args: {:?}", args);
         if args.len() != self.num_args {
-            println!("Expected {} arguments, got {}", self.num_args, args.len());
+            log!("Expected {} arguments, got {}", self.num_args, args.len());
             return Err(anyhow!(
                 "Expected {} arguments, got {}",
                 self.num_args,
                 args.len()
             ));
         }
-        for (arg, expected_type) in args.iter().zip(&self.arg_types) {
-            println!(
-                "Validating arg: {} with expected type: {}",
-                arg, expected_type
-            );
-            match *expected_type {
-                "String" => {} // All arguments are strings, so no validation needed
-                "Integer" => {
-                    if arg.parse::<i64>().is_err() {
-                        return Err(anyhow!("Expected integer, got {}", arg));
-                    }
+
+        args.iter()
+            .zip(&self.arg_types)
+            .map(|(arg, expected_type)| {
+                log!(
+                    "Validating arg: {} with expected type: {}",
+                    arg,
+                    expected_type
+                );
+                match *expected_type {
+                    "String" => Ok(Value::BulkString(arg.clone())),
+                    "Integer" => arg
+                        .parse::<i64>()
+                        .map(Value::Integer)
+                        .map_err(|_| anyhow!("Expected integer, got {}", arg)),
+                    _ => Err(anyhow!("Unknown argument type: {}", expected_type)),
                 }
-                _ => return Err(anyhow!("Unknown argument type: {}", expected_type)),
-            }
-        }
-        Ok(())
+            })
+            .collect()
     }
 }
 

@@ -1,5 +1,5 @@
-use anyhow::Result;
-use my_redis_client::{command_info::COMMANDS, redis_client::RedisClient};
+use anyhow::{anyhow, Result};
+use my_redis_client::{command_info::COMMANDS, log, redis_client::RedisClient};
 use structopt::StructOpt;
 
 #[derive(StructOpt)]
@@ -17,16 +17,16 @@ struct Cli {
 async fn main() -> Result<()> {
     let cli = Cli::from_args();
 
-    if let Some(command_info) = COMMANDS.get(cli.command.as_str()) {
-        let _ = command_info.validate_args(cli.args.clone());
+    let command = cli.command.to_uppercase();
+    let transformed_args = if let Some(command_info) = COMMANDS.get(command.as_str()) {
+        command_info.validate_and_transform_args(cli.args)?
     } else {
-        println!("Invalid command: {}", cli.command);
-        std::process::exit(1);
-    }
+        return Err(anyhow!("Invalid command: {}", cli.command));
+    };
 
     let mut redis_client = RedisClient::new(None, None).await;
 
-    let result = redis_client.send_command(cli.command, cli.args).await?;
-    println!("{:?}", result);
+    let result = redis_client.send_command(command, transformed_args).await?;
+    log!("{:?}", result);
     Ok(())
 }
