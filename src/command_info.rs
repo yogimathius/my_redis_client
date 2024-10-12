@@ -51,7 +51,7 @@ lazy_static! {
         m.insert("INFO", CommandInfo { num_args: 0, arg_types: vec![] });
         m.insert("SET", CommandInfo { num_args: 2, arg_types: vec!["String", "String"] });
         m.insert("GET", CommandInfo { num_args: 1, arg_types: vec!["String"] });
-        m.insert("KEY", CommandInfo { num_args: 1, arg_types: vec!["String"] });
+        m.insert("KEYS", CommandInfo { num_args: 1, arg_types: vec!["String"] });
         m.insert("TYPE", CommandInfo { num_args: 1, arg_types: vec!["String"] });
         m.insert("DEL", CommandInfo { num_args: 1, arg_types: vec!["String"] });
         m.insert("UNLINK", CommandInfo { num_args: 1, arg_types: vec!["String"] });
