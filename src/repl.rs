@@ -41,21 +41,21 @@ impl Repl {
             let _ = command_info.validate_args(args.clone());
         } else {
             eprintln!("Invalid command: {}", command);
-            std::process::exit(1);
+            self.buffer.clear();
+            return;
         }
 
         println!("Sending command: {} {:?}", command, args);
 
-        let _ = redis_client.send_command(command.to_string(), args).await;
-        self.buffer.clear();
-
-        match redis_client.read_response().await {
+        match redis_client.send_command(command.to_string(), args).await {
             Ok(response) => {
-                println!("{}", response);
+                println!("Response: {}", response);
             }
             Err(e) => {
-                eprintln!("Failed to read from stream: {}", e);
+                eprintln!("Error: {}", e);
             }
         }
+
+        self.buffer.clear();
     }
 }
