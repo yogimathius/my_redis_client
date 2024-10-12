@@ -1,4 +1,5 @@
 use anyhow::Result;
+use bytes::BytesMut;
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::TcpStream,
@@ -37,12 +38,13 @@ impl RedisClient {
         msg.extend(params.into_iter().map(Value::BulkString));
 
         println!("Sending msg: {:?}", msg);
-        let payload = Value::Array(msg);
+        let payload = Value::Array(msg).serialize();
 
         if let Some(stream) = &mut self.stream {
-            stream.write_all(payload.serialize().as_bytes()).await?;
+            stream.write_all(&payload).await?;
             let response = self.read_response().await?;
-            Ok(response)
+            let parsed_response = Value::deserialize(&response)?;
+            Ok(parsed_response.to_string())
         } else {
             Err(anyhow::anyhow!("Not connected to Redis server"))
         }
