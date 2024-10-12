@@ -92,9 +92,9 @@ OK
 You can also run commands directly by passing them as arguments:
 
 ```bash
-cargo run --bin my_redis_client GET ciao mondo
+cargo run --bin my_redis_shell GET ciao mondo
 OK
-cargo run --bin my_redis_client GET ciao
+cargo run --bin my_redis_shell GET ciao
 "mondo"
 ```
 

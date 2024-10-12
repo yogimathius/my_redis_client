@@ -9,7 +9,7 @@ use crate::models::value::Value;
 pub struct RedisClient {
     pub server_address: String,
     pub port: u16,
-    pub stream: TcpStream,
+    pub stream: Option<TcpStream>,
     pub command_queue: Vec<String>,
     pub last_response: Option<String>,
 }
@@ -26,34 +26,51 @@ impl RedisClient {
         RedisClient {
             server_address: default_addr,
             port: default_port,
-            stream: stream,
+            stream: Some(stream),
             command_queue: Vec::new(),
             last_response: None,
         }
     }
 
-    pub async fn send_command(&mut self, command: String, params: Vec<String>) -> Result<()> {
-        let mut msg = vec![Value::BulkString(String::from(command))];
+    pub async fn send_command(&mut self, command: String, params: Vec<String>) -> Result<String> {
+        let mut msg = vec![Value::BulkString(command)];
         msg.extend(params.into_iter().map(Value::BulkString));
 
-        println!("sending msg: {:?}", msg);
+        println!("Sending msg: {:?}", msg);
         let payload = Value::Array(msg);
-        self.stream
-            .write_all(payload.serialize().as_bytes())
-            .await
-            .unwrap();
-        Ok(())
+
+        if let Some(stream) = &mut self.stream {
+            stream.write_all(payload.serialize().as_bytes()).await?;
+            let response = self.read_response().await?;
+            Ok(response)
+        } else {
+            Err(anyhow::anyhow!("Not connected to Redis server"))
+        }
     }
 
     pub async fn read_response(&mut self) -> Result<String, std::io::Error> {
         let mut buffer = [0; 512];
-        let n = self.stream.read(&mut buffer).await?;
-        if n == 0 {
-            return Err(std::io::Error::new(
-                std::io::ErrorKind::UnexpectedEof,
-                "Connection closed by the server",
-            ));
+        if let Some(stream) = &mut self.stream {
+            let n = stream.read(&mut buffer).await?;
+            if n == 0 {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::UnexpectedEof,
+                    "Connection closed by the server",
+                ));
+            }
+            Ok(String::from_utf8_lossy(&buffer[..n]).to_string())
+        } else {
+            Err(std::io::Error::new(
+                std::io::ErrorKind::NotConnected,
+                "Not connected to Redis server",
+            ))
         }
-        Ok(String::from_utf8_lossy(&buffer[..n]).to_string())
+    }
+
+    pub async fn disconnect(&mut self) -> Result<()> {
+        if let Some(mut stream) = self.stream.take() {
+            stream.shutdown().await?;
+        }
+        Ok(())
     }
 }

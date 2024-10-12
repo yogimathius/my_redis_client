@@ -9,10 +9,8 @@ mod tests {
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let addr = listener.local_addr().unwrap();
 
-        // Spawn a task to accept the connection
         task::spawn(async move {
             let (socket, _) = listener.accept().await.unwrap();
-            // You can add more logic here to handle the mock server behavior
             let _ = socket;
         });
 
@@ -33,7 +31,7 @@ mod tests {
         assert!(client.command_queue.is_empty());
         assert!(client.last_response.is_none());
 
-        let result = client.stream.write(&[]).await;
+        let result = client.stream.as_mut().unwrap().write(&[]).await;
         assert!(result.is_ok(), "Expected stream to be in a good state");
     }
 }
