@@ -94,8 +94,8 @@ lazy_static! {
         m.insert("HGETALL", CommandInfo { name: "HGETALL", num_args: 1, arg_types: vec!["String"] });
         m.insert("HKEYS", CommandInfo { name: "HKEYS", num_args: 1, arg_types: vec!["String"] });
         m.insert("HLEN", CommandInfo { name: "HLEN", num_args: 1, arg_types: vec!["String"] });
-        m.insert("HMSET", CommandInfo { name: "HMSET", num_args: 1000, arg_types: vec!["String", "String", "String"] });
-        m.insert("HSET", CommandInfo { name: "HSET", num_args: 1000, arg_types: vec!["String", "String", "String"] });
+        m.insert("HMSET", CommandInfo { name: "HMSET", num_args: 0, arg_types: vec!["String", "String", "String"] });
+        m.insert("HSET", CommandInfo { name: "HSET", num_args: 0, arg_types: vec!["String", "String", "String"] });
         m.insert("HVALS", CommandInfo { name: "HVALS", num_args: 1, arg_types: vec!["String"] });
         m.insert("REPLCONF", CommandInfo { name: "REPLCONF", num_args: 2, arg_types: vec!["String"] });
         m

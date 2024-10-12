@@ -24,11 +24,6 @@ async fn main() -> Result<()> {
     let command = cli.command.to_uppercase();
 
     if let Some(new_command) = DEPRECATED_COMMANDS.get(command.as_str()) {
-        log!(
-            "Warning: Command '{}' is deprecated. Use '{}' instead.",
-            command,
-            new_command
-        );
         return Err(anyhow!(
             "Command '{}' is deprecated. Use '{}' instead.",
             command,

@@ -47,8 +47,6 @@ impl Repl {
                 command,
                 new_command
             );
-            // Optionally, you can automatically use the new command:
-            // self.process_command(redis_client, new_command.to_string(), args).await;
         } else {
             self.process_command(redis_client, command, args).await;
         }
