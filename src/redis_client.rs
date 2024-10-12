@@ -43,7 +43,9 @@ impl RedisClient {
         if let Some(stream) = &mut self.stream {
             stream.write_all(&payload).await?;
             let response = self.read_response().await?;
-            let parsed_response = Value::deserialize(&response)?;
+            println!("response: {:?}", response);
+            let mut bytes = BytesMut::from(response.as_str());
+            let parsed_response = Value::deserialize(&mut bytes)?;
             Ok(parsed_response.to_string())
         } else {
             Err(anyhow::anyhow!("Not connected to Redis server"))
