@@ -16,20 +16,6 @@ macro_rules! log {
     };
 }
 
-pub fn unpack_bulk_str(value: Value) -> Result<String> {
-    match value {
-        Value::BulkString(s) => Ok(s),
-        _ => Err(anyhow::anyhow!("Expected bulk string")),
-    }
-}
-
-pub fn unpack_integer(value: Value) -> Result<i64> {
-    match value {
-        Value::Integer(i) => Ok(i),
-        _ => Err(anyhow::anyhow!("Expected integer")),
-    }
-}
-
 pub fn parse_message(buffer: &mut BytesMut) -> Result<(Value, usize)> {
     match buffer[0] as char {
         '+' => parse_simple_string(buffer),
