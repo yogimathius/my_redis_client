@@ -12,6 +12,7 @@ bytes = "1.7.1"
 clap = { version = "4.5.4", features = ["derive"] }
 ctor = "0.2.8"
 lazy_static = "1.5.0"
+structopt = "0.3.26"
 tokio = { version = "1.39.2", features = ["full"] } 
 
 [[bin]]
