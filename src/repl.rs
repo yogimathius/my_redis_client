@@ -1,4 +1,8 @@
-use crate::{command_info::COMMANDS, log, redis_client::RedisClient};
+use crate::{
+    command_info::{COMMANDS, DEPRECATED_COMMANDS},
+    log,
+    redis_client::RedisClient,
+};
 
 pub struct Repl {
     buffer: String,
@@ -51,16 +55,20 @@ impl Repl {
         if let Some(command_info) = COMMANDS.get(command.to_uppercase().as_str()) {
             match command_info.validate_and_transform_args(args) {
                 Ok(transformed_args) => {
-                    log!("Sending command: {} {:?}", command, transformed_args);
-                    match redis_client
-                        .send_command(command.to_string(), transformed_args)
-                        .await
-                    {
-                        Ok(response) => {
-                            log!("Response: {}", response);
-                        }
-                        Err(e) => {
-                            log!("Error: {}", e);
+                    if DEPRECATED_COMMANDS.contains(&command.as_str()) {
+                        log!("Command {} is deprecated", command);
+                    } else {
+                        log!("Sending command: {} {:?}", command, transformed_args);
+                        match redis_client
+                            .send_command(command.to_string(), transformed_args)
+                            .await
+                        {
+                            Ok(response) => {
+                                log!("Response: {}", response);
+                            }
+                            Err(e) => {
+                                log!("Error: {}", e);
+                            }
                         }
                     }
                 }

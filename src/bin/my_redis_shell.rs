@@ -1,5 +1,9 @@
 use anyhow::{anyhow, Result};
-use my_redis_client::{command_info::COMMANDS, log, redis_client::RedisClient};
+use my_redis_client::{
+    command_info::{COMMANDS, DEPRECATED_COMMANDS},
+    log,
+    redis_client::RedisClient,
+};
 use structopt::StructOpt;
 
 #[derive(StructOpt)]
@@ -19,6 +23,10 @@ async fn main() -> Result<()> {
 
     let command = cli.command.to_uppercase();
     let transformed_args = if let Some(command_info) = COMMANDS.get(command.as_str()) {
+        log!("validating command: {:?}", command);
+        if DEPRECATED_COMMANDS.contains(&command.as_str()) {
+            return Err(anyhow!("Command {} is deprecated", command));
+        }
         command_info.validate_and_transform_args(cli.args)?
     } else {
         return Err(anyhow!("Invalid command: {}", cli.command));

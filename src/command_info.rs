@@ -15,8 +15,16 @@ pub struct CommandInfo {
 lazy_static! {
     static ref MANY_ARG_COMMANDS: HashSet<&'static str> = {
         let mut m = HashSet::new();
-        m.insert("HMSET");
+        m.insert("SET");
         m.insert("HSET");
+        m
+    };
+}
+
+lazy_static! {
+    pub static ref DEPRECATED_COMMANDS: HashSet<&'static str> = {
+        let mut m = HashSet::new();
+        m.insert("HMSET");
         m
     };
 }
