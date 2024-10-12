@@ -37,11 +37,21 @@ impl Repl {
         let command = parts[0];
         let args: Vec<String> = parts[1..].to_vec().iter().map(|s| s.to_string()).collect();
 
+        self.process_command(redis_client, command.to_string(), args)
+            .await;
+        self.buffer.clear();
+    }
+
+    pub async fn process_command(
+        &mut self,
+        redis_client: &mut RedisClient,
+        command: String,
+        args: Vec<String>,
+    ) {
         if let Some(command_info) = COMMANDS.get(command.to_uppercase().as_str()) {
             match command_info.validate_and_transform_args(args) {
                 Ok(transformed_args) => {
                     log!("Sending command: {} {:?}", command, transformed_args);
-
                     match redis_client
                         .send_command(command.to_string(), transformed_args)
                         .await
@@ -61,7 +71,5 @@ impl Repl {
         } else {
             log!("Invalid command: {}", command);
         }
-
-        self.buffer.clear();
     }
 }
