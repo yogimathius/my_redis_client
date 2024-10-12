@@ -38,11 +38,21 @@ impl Repl {
             self.buffer.clear();
             return;
         }
-        let command = parts[0];
+        let command = parts[0].to_uppercase();
         let args: Vec<String> = parts[1..].to_vec().iter().map(|s| s.to_string()).collect();
 
-        self.process_command(redis_client, command.to_string(), args)
-            .await;
+        if let Some(new_command) = DEPRECATED_COMMANDS.get(command.as_str()) {
+            log!(
+                "Warning: Command '{}' is deprecated. Use '{}' instead.",
+                command,
+                new_command
+            );
+            // Optionally, you can automatically use the new command:
+            // self.process_command(redis_client, new_command.to_string(), args).await;
+        } else {
+            self.process_command(redis_client, command, args).await;
+        }
+
         self.buffer.clear();
     }
 
@@ -55,20 +65,16 @@ impl Repl {
         if let Some(command_info) = COMMANDS.get(command.to_uppercase().as_str()) {
             match command_info.validate_and_transform_args(args) {
                 Ok(transformed_args) => {
-                    if DEPRECATED_COMMANDS.contains(&command.as_str()) {
-                        log!("Command {} is deprecated", command);
-                    } else {
-                        log!("Sending command: {} {:?}", command, transformed_args);
-                        match redis_client
-                            .send_command(command.to_string(), transformed_args)
-                            .await
-                        {
-                            Ok(response) => {
-                                log!("Response: {}", response);
-                            }
-                            Err(e) => {
-                                log!("Error: {}", e);
-                            }
+                    log!("Sending command: {} {:?}", command, transformed_args);
+                    match redis_client
+                        .send_command(command.to_string(), transformed_args)
+                        .await
+                    {
+                        Ok(response) => {
+                            log!("Response: {}", response);
+                        }
+                        Err(e) => {
+                            log!("Error: {}", e);
                         }
                     }
                 }

@@ -22,9 +22,9 @@ lazy_static! {
 }
 
 lazy_static! {
-    pub static ref DEPRECATED_COMMANDS: HashSet<&'static str> = {
-        let mut m = HashSet::new();
-        m.insert("HMSET");
+    pub static ref DEPRECATED_COMMANDS: HashMap<&'static str, &'static str> = {
+        let mut m = HashMap::new();
+        m.insert("HMSET", "HSET");
         m
     };
 }
