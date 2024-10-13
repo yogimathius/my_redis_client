@@ -1,8 +1,5 @@
-use crate::{
-    command_info::{COMMANDS, DEPRECATED_COMMANDS},
-    log,
-    redis_client::RedisClient,
-};
+use crate::{command_info::CommandInfo, log, models::value::Value, redis_client::RedisClient};
+use tokio::io::{self};
 
 pub struct Repl {
     buffer: String,
@@ -11,12 +8,13 @@ pub struct Repl {
 impl Repl {
     pub fn new() -> Repl {
         Repl {
-            buffer: String::new(),
+            buffer: String::with_capacity(1024),
         }
     }
 
     pub async fn run(&mut self, redis_client: &mut RedisClient) {
         log!("Welcome to the Redis REPL");
+
         loop {
             log!("> ");
             let mut input = String::new();
@@ -30,58 +28,42 @@ impl Repl {
     }
 
     pub async fn handle_input(&mut self, redis_client: &mut RedisClient) {
-        let input = self.buffer.trim();
-        log!("Handling input: {}", input);
-        let parts: Vec<&str> = input.split_whitespace().collect();
-        log!("split input into parts: {:?}", parts);
-        if parts.is_empty() {
-            self.buffer.clear();
+        let input = std::mem::take(&mut self.buffer);
+        let input = input.trim();
+        log!("Handling input: {:?}", input);
+        if input.is_empty() {
             return;
         }
-        let command = parts[0].to_uppercase();
-        let args: Vec<String> = parts[1..].to_vec().iter().map(|s| s.to_string()).collect();
 
-        if let Some(new_command) = DEPRECATED_COMMANDS.get(command.as_str()) {
-            log!(
-                "Warning: Command '{}' is deprecated. Use '{}' instead.",
-                command,
-                new_command
-            );
-        } else {
-            self.process_command(redis_client, command, args).await;
+        let mut parts = input.split_whitespace();
+        let command = parts.next().map(|s| s.to_uppercase()).unwrap_or_default();
+        let args: Vec<String> = parts.map(String::from).collect();
+
+        match CommandInfo::new(&command, args) {
+            Ok((validated_command, transformed_args)) => {
+                self.process_command(redis_client, validated_command, transformed_args)
+                    .await;
+            }
+            Err(e) => {
+                log!("Error validating command: {}", e);
+            }
         }
-
-        self.buffer.clear();
     }
 
     pub async fn process_command(
         &mut self,
         redis_client: &mut RedisClient,
         command: String,
-        args: Vec<String>,
+        args: Vec<Value>,
     ) {
-        if let Some(command_info) = COMMANDS.get(command.to_uppercase().as_str()) {
-            match command_info.validate_and_transform_args(args) {
-                Ok(transformed_args) => {
-                    log!("Sending command: {} {:?}", command, transformed_args);
-                    match redis_client
-                        .send_command(command.to_string(), transformed_args)
-                        .await
-                    {
-                        Ok(response) => {
-                            log!("Response: {}", response);
-                        }
-                        Err(e) => {
-                            log!("Error: {}", e);
-                        }
-                    }
-                }
-                Err(e) => {
-                    log!("Invalid arguments: {}", e);
-                }
+        log!("Sending command: {} {:?}", command, args);
+        match redis_client.send_command(command.to_string(), args).await {
+            Ok(response) => {
+                log!("Response: {}", response);
             }
-        } else {
-            log!("Invalid command: {}", command);
+            Err(e) => {
+                log!("Error: {}", e);
+            }
         }
     }
 }
