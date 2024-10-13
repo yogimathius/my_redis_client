@@ -60,14 +60,21 @@ fn parse_array(buffer: &mut BytesMut) -> Result<(Value, usize)> {
 fn parse_bulk_string(buffer: &mut BytesMut) -> Result<(Value, usize)> {
     let (bulk_str_len, bytes_consumed) = if let Some((line, len)) = read_until_crlf(&buffer[1..]) {
         let bulk_str_len = parse_int(line)?;
-
         (bulk_str_len, len + 1)
     } else {
-        return Err(anyhow::anyhow!("Invalid array format {:?}", buffer));
+        return Err(anyhow::anyhow!("Invalid bulk string format {:?}", buffer));
     };
+
+    if bulk_str_len == -1 {
+        return Ok((Value::NullBulkString, bytes_consumed));
+    }
 
     let end_of_bulk_str = bytes_consumed + bulk_str_len as usize;
     let total_parsed = end_of_bulk_str + 2;
+
+    if buffer.len() < total_parsed {
+        return Err(anyhow::anyhow!("Buffer too short for bulk string"));
+    }
 
     Ok((
         Value::BulkString(String::from_utf8(
