@@ -30,6 +30,25 @@ lazy_static! {
 }
 
 impl CommandInfo {
+    pub fn new(command: &str, args: Vec<String>) -> Result<(String, Vec<Value>)> {
+        if let Some(new_command) = DEPRECATED_COMMANDS.get(command) {
+            return Err(anyhow!(
+                "Command '{}' is deprecated. Use '{}' instead.",
+                command,
+                new_command
+            ));
+        }
+
+        let command_info = COMMANDS
+            .get(command)
+            .ok_or_else(|| anyhow!("Invalid command: {}", command))?;
+
+        log!("Validating command: {:?}", command);
+        let transformed_args = command_info.validate_and_transform_args(args)?;
+
+        Ok((command.to_string(), transformed_args))
+    }
+
     pub fn validate_and_transform_args(&self, args: Vec<String>) -> Result<Vec<Value>> {
         log!("Validating args: {:?}", args);
         if args.len() != self.num_args && !MANY_ARG_COMMANDS.contains(&self.name) {
